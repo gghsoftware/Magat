@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-<<<<<<< HEAD
 use Illuminate\Http\Request;
 
 class PackageController extends Controller
@@ -11,7 +10,6 @@ class PackageController extends Controller
     public function index()
     {
          return view('admin.manage-package.index');
-=======
 use App\Models\Package;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -151,6 +149,5 @@ class PackageController extends Controller
             return array_values(array_filter(array_map('trim', $lines), fn($v) => $v !== ''));
         }
         return null;
->>>>>>> 54d403e (Initial commit of Magat Funeral project)
     }
 }
