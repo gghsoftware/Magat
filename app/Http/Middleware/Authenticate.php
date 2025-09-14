@@ -2,19 +2,20 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Auth\Middleware\Authenticate as Middleware;
 
-class Authenticate
+class Authenticate extends Middleware
 {
-    public function handle(Request $request, Closure $next): Response
+    protected function redirectTo($request): ?string
     {
-        // Example: check if user is logged in
-        if (!$request->session()->has('user_id')) {
-            return redirect()->route('admin_login'); // adjust to your login route
+        if (! $request->expectsJson()) {
+            // Admin area goes to admin login
+            if ($request->routeIs('admin.*') || $request->is('admin/*')) {
+                return route('admin.login');
+            }
+            // Frontend login (this matches your blade path view('frontend.auth.login'))
+            return route('frontend.login');
         }
-
-        return $next($request);
+        return null;
     }
 }

@@ -4,15 +4,21 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Auth;
 
 class RedirectIfAuthenticated
 {
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, ...$guards)
     {
-        // Example: if already logged in, redirect away from login/register
-        if ($request->session()->has('user_id')) {
-            return redirect()->route('dashboard'); // adjust to your dashboard
+        $guards = empty($guards) ? [null] : $guards;
+
+        foreach ($guards as $guard) {
+            if (Auth::guard($guard)->check()) {
+                if ($guard === 'admin' || $request->routeIs('admin.*') || $request->is('admin/*')) {
+                    return redirect()->route('admin.dashboard');
+                }
+                return redirect()->route('frontend.home.index');
+            }
         }
 
         return $next($request);

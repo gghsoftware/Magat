@@ -19,7 +19,7 @@
     <div class="md:w-1/2 bg-green-700 text-white rounded-3xl p-10 shadow-lg">
         <h2 class="text-2xl font-semibold mb-6 text-center">Sign Up</h2>
 
-        <form action="{{ route('frontend.register') }}" method="POST" class="space-y-4">
+        <form action="{{ route('frontend.register.post') }}" method="POST" class="space-y-4">
             @csrf
 
             <!-- Full Name -->

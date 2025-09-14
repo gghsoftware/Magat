@@ -9,38 +9,38 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+    // app/Http/Controllers/Frontend/ProductController.php
+
     public function index(Request $request)
     {
         $currentCategory = $request->string('category', 'All')->toString();
-        $q       = $request->string('q')->toString();
-        $sort    = $request->string('sort', 'Newest')->toString();
+        $q               = $request->string('q')->toString();
+        $sort            = $request->string('sort', 'Newest')->toString();
 
-        // Only set when provided; otherwise NULL (no constraint)
         $minReq  = $request->filled('min_price') ? (int) $request->input('min_price') : null;
         $maxReq  = $request->filled('max_price') ? (int) $request->input('max_price') : null;
-
-        $inStock  = $request->boolean('in_stock');
+        $inStock = $request->boolean('in_stock');
         $outStock = $request->boolean('out_of_stock');
 
         $categories = Category::orderBy('name')->pluck('name')->toArray();
         array_unshift($categories, 'All');
 
         $query = Product::query()
-            ->with(['category'])
-            ->withCount('reviews')          // reviews_count
-            ->withAvg('reviews', 'rating'); // reviews_avg_rating
+            ->with(['category', 'components'])        // components for packages
+            ->withCount('reviews')
+            ->withAvg('reviews', 'rating');
 
         $query->categoryName($currentCategory)
             ->search($q)
-            ->priceBetween($minReq, $maxReq)   // your scope already ignores NULLs
+            ->priceBetweenEffective($minReq, $maxReq)
             ->availability($inStock, $outStock);
 
         switch ($sort) {
             case 'Price: Low to High':
-                $query->orderBy('price', 'asc');
+                $query->orderByListPrice('asc');
                 break;
             case 'Price: High to Low':
-                $query->orderBy('price', 'desc');
+                $query->orderByListPrice('desc');
                 break;
             default:
                 $query->latest();
@@ -65,6 +65,23 @@ class ProductController extends Controller
             'outStock'
         ));
     }
+
+    // Optional dedicated packages page:
+    public function packages(Request $request)
+    {
+        $request->merge(['category' => $request->input('category', 'All')]);
+        $q = $request->string('q')->toString();
+
+        $products = Product::packages()
+            ->with(['category', 'components'])
+            ->search($q)
+            ->latest()
+            ->paginate(12)
+            ->withQueryString();
+
+        return view('frontend.products.packages', compact('products', 'q'));
+    }
+
 
 
     public function show($id)

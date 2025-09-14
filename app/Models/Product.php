@@ -15,98 +15,107 @@ class Product extends Model
         'price',
         'stock',
         'image_url',
-        'status'
+        'status',
+        'type',
+        'effective_price'
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
+        'effective_price' => 'decimal:2',
     ];
 
-    protected $appends = ['image_src'];
-
-
-    /** Relationships */
-    public function category()
+    // --- Composition ---
+    // Products included in this package
+    public function components()
     {
-        return $this->belongsTo(Category::class);
-    }
-    public function reviews()
-    {
-        return $this->hasMany(ProductReview::class);
+        return $this->belongsToMany(Product::class, 'package_items', 'package_id', 'product_id')
+            ->withPivot(['quantity', 'price_override', 'is_optional'])
+            ->withTimestamps();
     }
 
-    /** Computed helpers used by Blade */
-    public function getInStockAttribute(): bool
+    // Packages that include this (inverse)
+    public function includedInPackages()
     {
-        // in stock if has stock and marked available
-        return $this->status === 'available' && $this->stock > 0;
+        return $this->belongsToMany(Product::class, 'package_items', 'product_id', 'package_id')
+            ->withPivot(['quantity', 'price_override', 'is_optional'])
+            ->withTimestamps();
     }
 
-    public function getIsNewAttribute(): bool
+    // --- Type helpers ---
+    public function getIsPackageAttribute(): bool
     {
-        // Show "New" badge for items created within last 30 days
-        return optional($this->created_at)->gt(now()->subDays(30));
+        return $this->type === 'package';
     }
 
-    /** 🔧 Image URL accessor (always returns a usable URL) */
-    public function getImageSrcAttribute(): string
+    public function getListPriceAttribute(): float
     {
-        $val = trim((string) $this->image_url);
-        if (!$val) {
-            return asset('images/placeholder.jpg');
+        // Use effective_price for package (precomputed), else normal price
+        return (float) ($this->effective_price ?? $this->price ?? 0);
+    }
+
+    // --- Compute total (server-side) ---
+    public function computeEffectivePrice(): float
+    {
+        if (!$this->is_package) {
+            return (float) $this->price;
         }
 
-        // Absolute URL (CDN/external)
-        if (Str::startsWith($val, ['http://', 'https://'])) {
-            return $val;
+        $this->loadMissing('components');
+        $sum = 0;
+        foreach ($this->components as $child) {
+            $unit = $child->pivot->price_override ?? $child->price ?? 0;
+            $qty  = max(1, (int) $child->pivot->quantity);
+            $sum += $unit * $qty;
         }
-
-        // Normalize common saved formats
-        $rel = ltrim($val, '/');                 // remove leading slash
-        $rel = str_replace('\\', '/', $rel);     // windows -> unix
-        if (Str::startsWith($rel, 'storage/')) {
-            $rel = Str::after($rel, 'storage/'); // keep "products/xxx.jpg"
-        }
-
-        // Serve via public storage symlink
-        return asset('storage/' . $rel);
+        return round($sum, 2);
     }
 
-    /** Scopes for filters */
-    public function scopeSearch(Builder $q, ?string $term): Builder
+    protected static function booted()
     {
-        if (!$term) return $q;
-        return $q->where(
-            fn($qq) =>
-            $qq->where('name', 'like', "%{$term}%")
-                ->orWhere('description', 'like', "%{$term}%")
-        );
+        // Any time a package or its composition changes, keep effective_price in sync.
+        static::saved(function (Product $product) {
+            if ($product->type === 'package') {
+                $product->effective_price = $product->computeEffectivePrice();
+                $product->saveQuietly();
+            }
+        });
     }
 
-    public function scopeCategoryName(Builder $q, ?string $categoryName): Builder
+    // --- Filters (make them package-aware) ---
+    public function scopePriceBetweenEffective(Builder $q, ?int $min, ?int $max): Builder
     {
-        if (!$categoryName || $categoryName === 'All') return $q;
-        return $q->whereHas('category', fn($cq) => $cq->where('name', $categoryName));
-    }
-
-    public function scopePriceBetween(Builder $q, ?int $min, ?int $max): Builder
-    {
-        if (!is_null($min)) $q->where('price', '>=', $min);
-        if (!is_null($max)) $q->where('price', '<=', $max);
+        if (!is_null($min)) $q->whereRaw('COALESCE(effective_price, price) >= ?', [$min]);
+        if (!is_null($max)) $q->whereRaw('COALESCE(effective_price, price) <= ?', [$max]);
         return $q;
     }
 
-    public function scopeAvailability(Builder $q, $inStock, $outOfStock): Builder
+    public function scopeOrderByListPrice(Builder $q, string $dir = 'asc'): Builder
     {
-        if ($inStock && !$outOfStock) {
-            return $q->where('status', 'available')->where('stock', '>', 0);
+        return $q->orderByRaw('COALESCE(effective_price, price) ' . ($dir === 'desc' ? 'DESC' : 'ASC'));
+    }
+
+    public function scopePackages(Builder $q): Builder
+    {
+        return $q->where('type', 'package');
+    }
+
+    // --- Stock for packages (required items must be in stock) ---
+    public function getInStockAttribute(): bool
+    {
+        if ($this->is_package) {
+            $this->loadMissing('components');
+            foreach ($this->components as $child) {
+                if (!$child->pivot->is_optional) {
+                    // Use the child’s own simple in-stock logic:
+                    $ok = ($child->status === 'available' && $child->stock > 0);
+                    if (!$ok) return false;
+                }
+            }
+            return true;
         }
-        if ($outOfStock && !$inStock) {
-            return $q->where(
-                fn($qq) =>
-                $qq->where('status', 'unavailable')->orWhere('stock', '<=', 0)
-            );
-        }
-        return $q; // both or none -> no filter
+
+        // original logic for simple products
+        return $this->status === 'available' && $this->stock > 0;
     }
 }
