@@ -10,6 +10,10 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\InventoryController;
+<<<<<<< HEAD
+=======
+use App\Http\Controllers\Admin\PaymentController;
+>>>>>>> 54d403e (Initial commit of Magat Funeral project)
 
 /*
 |--------------------------------------------------------------------------
@@ -64,5 +68,52 @@ Route::prefix('admin')->as('admin.')->group(function () {
 
         // Example: products CRUD for admin
         Route::resource('/products', ProductController::class)->names('products');
+<<<<<<< HEAD
     });
+=======
+
+
+            Route::post('/payments/{payment}/approve', [PaymentController::class, 'approve'])->name('payments.approve');
+            Route::post('/payments/{payment}/reject', [PaymentController::class, 'reject'])->name('payments.reject');
+
+            // Payments list
+    Route::get('/payments', [PaymentController::class, 'index'])
+    ->name('payments.index');
+
+// Approve payment
+Route::post('/payments/{payment}/approve', [PaymentController::class, 'approve'])
+    ->name('payments.approve');
+
+// Reject payment
+Route::post('/payments/{payment}/reject', [PaymentController::class, 'reject'])
+    ->name('payments.reject');
+
+    Route::resource('packages', PackageController::class)->except(['show']);
+
+      // Orders list & detail
+      Route::get('/orders',        [OrderController::class, 'index'])->name('orders.index');
+      Route::get('/orders/{order}',[OrderController::class, 'show'])->name('orders.show');
+
+      // Actions
+      Route::post('/orders/{order}/confirm',  [OrderController::class, 'confirm'])->name('orders.confirm');
+      Route::post('/orders/{order}/mark-paid',[OrderController::class, 'markPaid'])->name('orders.markPaid');
+      Route::post('/orders/{order}/cancel',   [OrderController::class, 'cancel'])->name('orders.cancel');
+
+      // Optional hard delete
+      Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
+
+   
+    // Customers
+    Route::get('/customers',                     [CustomerController::class, 'index'])->name('customers.index');
+    Route::get('/customers/create',              [CustomerController::class, 'create'])->name('customers.create');
+    Route::post('/customers',                    [CustomerController::class, 'store'])->name('customers.store');
+    Route::get('/customers/{customer}',          [CustomerController::class, 'show'])->name('customers.show');
+    Route::get('/customers/{customer}/edit',     [CustomerController::class, 'edit'])->name('customers.edit');
+    Route::put('/customers/{customer}',          [CustomerController::class, 'update'])->name('customers.update');
+    Route::delete('/customers/{customer}',       [CustomerController::class, 'destroy'])->name('customers.destroy');
+    Route::post('/customers/{customer}/toggle-status',[CustomerController::class, 'toggleStatus'])->name('customers.toggle');
+
+  });
+
+>>>>>>> 54d403e (Initial commit of Magat Funeral project)
 });

@@ -27,6 +27,7 @@
             Manage Package
         </a>
 
+<<<<<<< HEAD
         <!-- Inventory -->
         <a href="{{ route('admin.inventory.index') }}"
            class="flex items-center px-6 py-3 hover:bg-green-700 transition {{ request()->routeIs('admin.inventory.*') ? 'bg-green-800' : '' }}">
@@ -46,6 +47,30 @@
             </svg>
             Orders
         </a>
+=======
+                <!-- Payments -->
+            <a href="{{ route('admin.payments.index') }}"
+            class="flex items-center px-6 py-3 hover:bg-green-700 transition {{ request()->routeIs('admin.payments.*') ? 'bg-green-800' : '' }}">
+                <!-- Credit Card Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 10h18M3 6h18a2 2 0 012 2v8a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2z" />
+                </svg>
+                Payments
+            </a>
+
+
+            <a href="{{ route('admin.orders.index') }}"
+   class="flex items-center px-6 py-3 hover:bg-green-700 transition {{ request()->routeIs('admin.orders.*') ? 'bg-green-800' : '' }}">
+    <!-- Orders icon -->
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 7h18M3 12h18M3 17h18"/>
+    </svg>
+    Orders
+</a>
+
+>>>>>>> 54d403e (Initial commit of Magat Funeral project)
 
         <!-- View Customers -->
         <a href="{{ route('admin.customers.index') }}"

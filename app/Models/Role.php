@@ -18,4 +18,23 @@ class Role extends Model
     {
         return $this->hasMany(User::class);
     }
+<<<<<<< HEAD
+=======
+
+    /**
+     * Convenience scope: find role by name easily.
+     */
+    public function scopeNamed($query, string $name)
+    {
+        return $query->where('role_name', $name);
+    }
+
+    /**
+     * Helper: check if this role is "customer".
+     */
+    public function isCustomer(): bool
+    {
+        return strtolower($this->role_name) === 'customer';
+    }
+>>>>>>> 54d403e (Initial commit of Magat Funeral project)
 }
