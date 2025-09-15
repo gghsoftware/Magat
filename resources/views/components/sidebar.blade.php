@@ -27,27 +27,6 @@
             Manage Package
         </a>
 
-<<<<<<< HEAD
-        <!-- Inventory -->
-        <a href="{{ route('admin.inventory.index') }}"
-           class="flex items-center px-6 py-3 hover:bg-green-700 transition {{ request()->routeIs('admin.inventory.*') ? 'bg-green-800' : '' }}">
-            <!-- Cube Icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4a2 2 0 001-1.73z" />
-            </svg>
-            Inventory
-        </a>
-
-        <!-- Orders -->
-        <a href="{{ route('admin.orders.index') }}"
-           class="flex items-center px-6 py-3 hover:bg-green-700 transition {{ request()->routeIs('admin.orders.*') ? 'bg-green-800' : '' }}">
-            <!-- Shopping Cart Icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.6 8m0 0a2 2 0 104 0m-4 0a2 2 0 11-4 0" />
-            </svg>
-            Orders
-        </a>
-=======
                 <!-- Payments -->
             <a href="{{ route('admin.payments.index') }}"
             class="flex items-center px-6 py-3 hover:bg-green-700 transition {{ request()->routeIs('admin.payments.*') ? 'bg-green-800' : '' }}">
@@ -70,7 +49,6 @@
     Orders
 </a>
 
->>>>>>> 54d403e (Initial commit of Magat Funeral project)
 
         <!-- View Customers -->
         <a href="{{ route('admin.customers.index') }}"

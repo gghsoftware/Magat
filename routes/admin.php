@@ -10,10 +10,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\InventoryController;
-<<<<<<< HEAD
-=======
 use App\Http\Controllers\Admin\PaymentController;
->>>>>>> 54d403e (Initial commit of Magat Funeral project)
 
 /*
 |--------------------------------------------------------------------------
@@ -68,9 +65,6 @@ Route::prefix('admin')->as('admin.')->group(function () {
 
         // Example: products CRUD for admin
         Route::resource('/products', ProductController::class)->names('products');
-<<<<<<< HEAD
-    });
-=======
 
 
             Route::post('/payments/{payment}/approve', [PaymentController::class, 'approve'])->name('payments.approve');
@@ -113,7 +107,8 @@ Route::post('/payments/{payment}/reject', [PaymentController::class, 'reject'])
     Route::delete('/customers/{customer}',       [CustomerController::class, 'destroy'])->name('customers.destroy');
     Route::post('/customers/{customer}/toggle-status',[CustomerController::class, 'toggleStatus'])->name('customers.toggle');
 
+
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
   });
 
->>>>>>> 54d403e (Initial commit of Magat Funeral project)
 });

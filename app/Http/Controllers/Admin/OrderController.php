@@ -3,19 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-<<<<<<< HEAD
-=======
 use App\Models\Order;
->>>>>>> 54d403e (Initial commit of Magat Funeral project)
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-<<<<<<< HEAD
-    public function index()
-    {
-        return view('admin.orders.index');
-=======
     // GET /admin/orders
     public function index(Request $request)
     {
@@ -81,6 +73,5 @@ class OrderController extends Controller
     {
         $order->delete();
         return redirect()->route('admin.orders.index')->with('success', 'Order deleted.');
->>>>>>> 54d403e (Initial commit of Magat Funeral project)
     }
 }
