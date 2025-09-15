@@ -3,15 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-<<<<<<< HEAD
-
-class DashboardController extends Controller
-{
-    public function index()
-    {
-        // You can pass data (like total users, orders, etc.) here
-        return view('admin.dashboard');
-=======
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\User;
@@ -82,6 +73,5 @@ class DashboardController extends Controller
             'supportsVerification' => $hasVerification,
             'supportsProof'        => $hasProof,
         ]);
->>>>>>> 54d403e (Initial commit of Magat Funeral project)
     }
 }

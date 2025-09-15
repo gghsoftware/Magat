@@ -18,8 +18,6 @@ class Role extends Model
     {
         return $this->hasMany(User::class);
     }
-<<<<<<< HEAD
-=======
 
     /**
      * Convenience scope: find role by name easily.
@@ -36,5 +34,4 @@ class Role extends Model
     {
         return strtolower($this->role_name) === 'customer';
     }
->>>>>>> 54d403e (Initial commit of Magat Funeral project)
 }

@@ -5,10 +5,7 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-<<<<<<< HEAD
-=======
 use Illuminate\Support\Facades\Hash;
->>>>>>> 54d403e (Initial commit of Magat Funeral project)
 
 class User extends Authenticatable
 {
@@ -29,14 +26,6 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-<<<<<<< HEAD
-    /**
-     * A user belongs to a role.
-     */
-    public function role()
-    {
-        return $this->belongsTo(Role::class);
-=======
     protected $casts = [
         'email_verified_at' => 'datetime',
         'created_at'        => 'datetime',
@@ -99,6 +88,5 @@ class User extends Authenticatable
         $this->attributes['password'] = Hash::needsRehash($value)
             ? Hash::make($value)
             : $value;
->>>>>>> 54d403e (Initial commit of Magat Funeral project)
     }
 }
